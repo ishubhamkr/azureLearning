@@ -1,0 +1,1185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Interactive 60-day Azure learning plan with topic-specific YouTube videos, official documentation, hands-on labs and persistent progress tracking.">
+  <title>60-Day Azure Learning Sprint — Videos, Docs & Labs</title>
+  <style>
+    :root {
+      --bg: #07111f;
+      --bg-2: #0b1830;
+      --panel: rgba(12, 29, 54, 0.82);
+      --panel-solid: #0d1d36;
+      --panel-2: rgba(18, 40, 73, 0.76);
+      --text: #edf6ff;
+      --muted: #9db0c9;
+      --line: rgba(255,255,255,0.10);
+      --line-strong: rgba(255,255,255,0.18);
+      --accent: #64d8ff;
+      --accent-2: #8b7cff;
+      --success: #49d99d;
+      --warning: #ffcc66;
+      --danger: #ff7a8a;
+      --shadow: 0 22px 70px rgba(0,0,0,0.34);
+      --radius: 24px;
+      --radius-sm: 15px;
+      --header-h: 72px;
+    }
+
+    body.light {
+      --bg: #eff5fb;
+      --bg-2: #e4edf7;
+      --panel: rgba(255,255,255,0.88);
+      --panel-solid: #ffffff;
+      --panel-2: rgba(244,248,253,0.95);
+      --text: #10223a;
+      --muted: #5e7188;
+      --line: rgba(16,34,58,0.10);
+      --line-strong: rgba(16,34,58,0.18);
+      --accent: #087bb4;
+      --accent-2: #6657db;
+      --success: #138a5c;
+      --warning: #a56700;
+      --danger: #b73b50;
+      --shadow: 0 22px 70px rgba(29,67,105,0.16);
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 12% -10%, rgba(100,216,255,0.20), transparent 34%),
+        radial-gradient(circle at 92% 2%, rgba(139,124,255,0.18), transparent 30%),
+        linear-gradient(180deg, var(--bg), var(--bg-2));
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.55;
+      transition: background .25s ease, color .25s ease;
+    }
+
+    button, input, select, textarea { font: inherit; }
+    button, select, input[type="checkbox"] { cursor: pointer; }
+    a { color: inherit; }
+
+    .ambient {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      overflow: hidden;
+      z-index: -1;
+    }
+    .orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(2px);
+      opacity: .32;
+      animation: drift 18s ease-in-out infinite alternate;
+    }
+    .orb.one { width: 320px; height: 320px; left: -160px; top: 30%; background: rgba(100,216,255,.18); }
+    .orb.two { width: 440px; height: 440px; right: -250px; top: 42%; background: rgba(139,124,255,.17); animation-delay: -6s; }
+    @keyframes drift { to { transform: translate3d(40px,-24px,0) scale(1.08); } }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      height: var(--header-h);
+      display: flex;
+      align-items: center;
+      border-bottom: 1px solid var(--line);
+      background: color-mix(in srgb, var(--bg) 76%, transparent);
+      backdrop-filter: blur(18px);
+    }
+    .topbar-inner {
+      width: min(1440px, calc(100% - 32px));
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+    .brand { display: flex; align-items: center; gap: 12px; min-width: 0; }
+    .brand-mark {
+      width: 40px;
+      height: 40px;
+      display: grid;
+      place-items: center;
+      border-radius: 13px;
+      color: #07111f;
+      background: linear-gradient(135deg, var(--accent), #b8f1ff 52%, var(--accent-2));
+      box-shadow: 0 9px 30px rgba(100,216,255,.24);
+      flex: 0 0 auto;
+    }
+    .brand-mark svg { width: 24px; height: 24px; }
+    .brand-copy { min-width: 0; }
+    .brand-copy strong { display: block; font-size: 14px; letter-spacing: .02em; }
+    .brand-copy span { display: block; color: var(--muted); font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+    .top-actions { display: flex; align-items: center; gap: 8px; }
+    .icon-btn, .ghost-btn, .primary-btn, .danger-btn {
+      border: 1px solid var(--line);
+      color: var(--text);
+      background: var(--panel-2);
+      border-radius: 12px;
+      padding: 10px 13px;
+      transition: transform .18s ease, border-color .18s ease, background .18s ease;
+    }
+    .icon-btn { width: 42px; height: 42px; display: grid; place-items: center; padding: 0; }
+    .icon-btn:hover, .ghost-btn:hover, .primary-btn:hover, .danger-btn:hover { transform: translateY(-1px); border-color: var(--line-strong); }
+    .primary-btn { background: linear-gradient(135deg, var(--accent), var(--accent-2)); color: #07111f; border: none; font-weight: 800; }
+    .danger-btn { color: var(--danger); }
+    .ghost-btn.small { padding: 8px 10px; font-size: 12px; }
+
+    .shell { width: min(1440px, calc(100% - 32px)); margin: 0 auto; padding: 34px 0 70px; }
+
+    .hero {
+      position: relative;
+      overflow: hidden;
+      padding: clamp(28px, 5vw, 58px);
+      border: 1px solid var(--line);
+      border-radius: 32px;
+      background:
+        linear-gradient(135deg, rgba(100,216,255,.10), transparent 42%),
+        linear-gradient(315deg, rgba(139,124,255,.12), transparent 45%),
+        var(--panel);
+      box-shadow: var(--shadow);
+    }
+    .hero:after {
+      content: "";
+      position: absolute;
+      width: 360px;
+      height: 360px;
+      right: -130px;
+      top: -180px;
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: 50%;
+      box-shadow: 0 0 0 35px rgba(255,255,255,.025), 0 0 0 75px rgba(255,255,255,.018);
+    }
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 11px;
+      border: 1px solid var(--line-strong);
+      border-radius: 999px;
+      color: var(--accent);
+      background: rgba(100,216,255,.07);
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: .09em;
+      text-transform: uppercase;
+    }
+    .eyebrow-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--success); box-shadow: 0 0 14px var(--success); }
+    h1 {
+      position: relative;
+      z-index: 1;
+      max-width: 900px;
+      margin: 18px 0 10px;
+      font-size: clamp(38px, 6vw, 76px);
+      line-height: .98;
+      letter-spacing: -.055em;
+    }
+    .gradient-text {
+      background: linear-gradient(90deg, var(--accent), #b7eeff 44%, #b5aaff 84%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    .hero-copy { max-width: 870px; margin: 0; color: var(--muted); font-size: clamp(15px, 1.6vw, 19px); }
+    .hero-meta { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 24px; }
+    .meta-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 9px 12px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: rgba(255,255,255,.035);
+      color: var(--muted);
+      font-size: 13px;
+    }
+    .meta-pill b { color: var(--text); }
+
+    .reality-note {
+      margin-top: 18px;
+      padding: 16px 18px;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      border: 1px solid color-mix(in srgb, var(--warning) 36%, transparent);
+      border-radius: var(--radius-sm);
+      background: color-mix(in srgb, var(--warning) 8%, transparent);
+    }
+    .reality-note svg { flex: 0 0 auto; width: 21px; height: 21px; margin-top: 2px; color: var(--warning); }
+    .reality-note strong { color: var(--warning); }
+    .reality-note p { margin: 0; color: var(--muted); font-size: 14px; }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 14px;
+      margin: 22px 0;
+    }
+    .stat-card {
+      padding: 19px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-sm);
+      background: var(--panel);
+      box-shadow: 0 12px 30px rgba(0,0,0,.10);
+    }
+    .stat-label { color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: .08em; font-weight: 800; }
+    .stat-value { margin-top: 4px; font-size: 28px; font-weight: 900; letter-spacing: -.035em; }
+    .stat-sub { color: var(--muted); font-size: 12px; margin-top: 2px; }
+
+    .progress-panel {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      align-items: center;
+      gap: 20px;
+      padding: 22px;
+      margin-bottom: 22px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--panel);
+    }
+    .progress-ring {
+      --p: 0deg;
+      width: 112px;
+      height: 112px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background: conic-gradient(var(--success) var(--p), rgba(255,255,255,.08) 0);
+      position: relative;
+    }
+    .progress-ring:before {
+      content: "";
+      width: 82px;
+      height: 82px;
+      position: absolute;
+      border-radius: 50%;
+      background: var(--panel-solid);
+      border: 1px solid var(--line);
+    }
+    .progress-ring span { position: relative; font-weight: 900; font-size: 22px; }
+    .progress-copy h2 { margin: 0 0 5px; font-size: 22px; }
+    .progress-copy p { margin: 0; color: var(--muted); font-size: 14px; }
+    .progress-bar { height: 8px; margin-top: 13px; border-radius: 999px; background: rgba(255,255,255,.08); overflow: hidden; }
+    .progress-bar > i { display: block; height: 100%; width: 0; border-radius: inherit; background: linear-gradient(90deg, var(--success), var(--accent)); transition: width .35s ease; }
+    .progress-actions { display: flex; flex-direction: column; align-items: stretch; gap: 8px; }
+
+    .controls {
+      display: grid;
+      grid-template-columns: minmax(240px, 1.5fr) repeat(2, minmax(160px, .65fr)) auto;
+      gap: 10px;
+      padding: 13px;
+      margin-bottom: 22px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-sm);
+      background: var(--panel);
+      position: sticky;
+      top: calc(var(--header-h) + 10px);
+      z-index: 30;
+      box-shadow: 0 12px 36px rgba(0,0,0,.18);
+      backdrop-filter: blur(18px);
+    }
+    .control {
+      min-width: 0;
+      height: 46px;
+      border: 1px solid var(--line);
+      border-radius: 11px;
+      background: var(--panel-2);
+      color: var(--text);
+      padding: 0 13px;
+      outline: none;
+    }
+    .control:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(100,216,255,.10); }
+    .toggle-wrap {
+      height: 46px;
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      padding: 0 12px;
+      border: 1px solid var(--line);
+      border-radius: 11px;
+      background: var(--panel-2);
+      color: var(--muted);
+      font-size: 13px;
+      white-space: nowrap;
+    }
+    .toggle-wrap input { accent-color: var(--accent); }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 300px minmax(0,1fr);
+      gap: 22px;
+      align-items: start;
+    }
+    .sidebar {
+      position: sticky;
+      top: calc(var(--header-h) + 89px);
+      display: grid;
+      gap: 14px;
+    }
+    .side-card {
+      padding: 18px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-sm);
+      background: var(--panel);
+    }
+    .side-card h3 { margin: 0 0 13px; font-size: 15px; }
+    .stage-row { padding: 9px 0; border-top: 1px solid var(--line); }
+    .stage-row:first-of-type { border-top: 0; padding-top: 0; }
+    .stage-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; font-size: 12px; }
+    .stage-name { color: var(--muted); min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .stage-count { font-variant-numeric: tabular-nums; color: var(--text); }
+    .stage-line { margin-top: 6px; height: 5px; background: rgba(255,255,255,.07); border-radius: 999px; overflow: hidden; }
+    .stage-line i { display: block; height: 100%; border-radius: inherit; background: hsl(var(--h) 82% 63%); }
+    .study-rhythm { display: grid; gap: 10px; }
+    .rhythm-item { display: grid; grid-template-columns: 46px 1fr; gap: 10px; align-items: start; }
+    .rhythm-time { color: var(--accent); font-size: 12px; font-weight: 900; }
+    .rhythm-item b { display: block; font-size: 12px; }
+    .rhythm-item span { display: block; color: var(--muted); font-size: 11px; }
+    .cost-note { color: var(--muted); font-size: 12px; margin: 0; }
+
+    .schedule-head { display: flex; align-items: end; justify-content: space-between; gap: 16px; margin: 2px 0 14px; }
+    .schedule-head h2 { margin: 0; font-size: 25px; }
+    .schedule-head p { margin: 2px 0 0; color: var(--muted); font-size: 13px; }
+    .result-count { color: var(--muted); font-size: 12px; white-space: nowrap; }
+
+    .week-block { margin-bottom: 24px; }
+    .week-label {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 0 0 10px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+    .week-label:after { content: ""; height: 1px; flex: 1; background: var(--line); }
+    .day-grid { display: grid; gap: 13px; }
+
+    .day-card {
+      position: relative;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      background: var(--panel);
+      transition: transform .2s ease, border-color .2s ease, opacity .2s ease;
+    }
+    .day-card.study:hover { transform: translateY(-2px); border-color: var(--line-strong); }
+    .day-card.study:before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 4px;
+      background: hsl(var(--stage-h) 82% 63%);
+    }
+    .day-card.completed { border-color: color-mix(in srgb, var(--success) 42%, var(--line)); }
+    .day-card.completed:after {
+      content: "Completed";
+      position: absolute;
+      right: -36px;
+      top: 18px;
+      width: 134px;
+      padding: 4px 0;
+      text-align: center;
+      transform: rotate(36deg);
+      background: var(--success);
+      color: #062419;
+      font-size: 10px;
+      font-weight: 900;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+    .day-card.today { box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 58%, transparent), 0 16px 50px rgba(0,0,0,.16); }
+    .card-main { padding: 21px 22px 17px 25px; }
+    .card-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 18px; }
+    .day-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-bottom: 7px; }
+    .day-number { color: var(--muted); font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: .06em; }
+    .date-pill, .stage-pill, .today-pill {
+      display: inline-flex;
+      align-items: center;
+      min-height: 24px;
+      padding: 3px 8px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      font-size: 10px;
+      font-weight: 800;
+    }
+    .stage-pill { color: hsl(var(--stage-h) 88% 72%); border-color: hsl(var(--stage-h) 72% 44% / .45); background: hsl(var(--stage-h) 76% 48% / .08); }
+    .today-pill { color: var(--accent); }
+    .day-card h3 { margin: 0; font-size: clamp(19px, 2vw, 25px); letter-spacing: -.025em; line-height: 1.2; }
+    .objective { margin: 8px 0 0; color: var(--muted); font-size: 14px; max-width: 920px; }
+
+    .check-control { position: relative; flex: 0 0 auto; }
+    .check-control input { position: absolute; opacity: 0; pointer-events: none; }
+    .check-box {
+      width: 50px;
+      height: 50px;
+      display: grid;
+      place-items: center;
+      border-radius: 15px;
+      border: 1px solid var(--line-strong);
+      background: var(--panel-2);
+      color: transparent;
+      transition: all .2s ease;
+    }
+    .check-box svg { width: 25px; height: 25px; }
+    .check-control input:checked + .check-box { color: #062419; background: var(--success); border-color: var(--success); box-shadow: 0 9px 28px rgba(73,217,157,.22); }
+    .check-control input:focus-visible + .check-box { outline: 3px solid rgba(100,216,255,.25); outline-offset: 3px; }
+
+    .card-columns {
+      display: grid;
+      grid-template-columns: 1.25fr .95fr;
+      gap: 18px;
+      margin-top: 18px;
+    }
+    .section-label { margin: 0 0 8px; color: var(--muted); font-size: 10px; font-weight: 900; text-transform: uppercase; letter-spacing: .10em; }
+    .topic-list { margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 7px 12px; list-style: none; }
+    .topic-list li { position: relative; padding-left: 14px; font-size: 12px; }
+    .topic-list li:before { content: ""; position: absolute; left: 0; top: .68em; width: 5px; height: 5px; border-radius: 50%; background: hsl(var(--stage-h) 82% 63%); }
+    .activity-box { display: grid; gap: 10px; }
+    .activity {
+      padding: 12px 13px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: rgba(255,255,255,.025);
+    }
+    .activity b { display: block; margin-bottom: 3px; font-size: 11px; color: var(--accent); text-transform: uppercase; letter-spacing: .07em; }
+    .activity p { margin: 0; color: var(--muted); font-size: 12px; }
+
+    details { border-top: 1px solid var(--line); }
+    summary {
+      list-style: none;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 13px 22px 13px 25px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+    summary::-webkit-details-marker { display: none; }
+    summary .chev { transition: transform .2s ease; }
+    details[open] summary .chev { transform: rotate(180deg); }
+    .notes-wrap { padding: 0 22px 18px 25px; }
+    .notes-wrap textarea {
+      width: 100%;
+      min-height: 92px;
+      resize: vertical;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: var(--panel-2);
+      color: var(--text);
+      padding: 12px;
+      outline: none;
+    }
+    .notes-wrap textarea:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(100,216,255,.10); }
+    .saved-hint { display: block; margin-top: 6px; color: var(--muted); font-size: 10px; }
+
+    .rest-card {
+      min-height: 85px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      padding: 17px 20px;
+      border-style: dashed;
+      background: rgba(255,255,255,.018);
+    }
+    .rest-card .rest-copy { display: flex; align-items: center; gap: 13px; }
+    .rest-icon { width: 42px; height: 42px; display: grid; place-items: center; border-radius: 13px; background: var(--panel-2); color: var(--accent-2); }
+    .rest-card h3 { margin: 0; font-size: 15px; }
+    .rest-card p { margin: 2px 0 0; color: var(--muted); font-size: 12px; }
+    .rest-card .date-pill { color: var(--muted); }
+
+    .empty {
+      padding: 48px 20px;
+      text-align: center;
+      border: 1px dashed var(--line-strong);
+      border-radius: var(--radius);
+      color: var(--muted);
+    }
+
+    .footer {
+      margin-top: 38px;
+      padding: 24px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--panel);
+      color: var(--muted);
+      font-size: 13px;
+    }
+    .footer strong { color: var(--text); }
+
+    .toast {
+      position: fixed;
+      right: 20px;
+      bottom: 20px;
+      z-index: 100;
+      max-width: 360px;
+      padding: 12px 15px;
+      border: 1px solid var(--line-strong);
+      border-radius: 12px;
+      background: var(--panel-solid);
+      color: var(--text);
+      box-shadow: var(--shadow);
+      opacity: 0;
+      transform: translateY(18px);
+      pointer-events: none;
+      transition: .22s ease;
+    }
+    .toast.show { opacity: 1; transform: translateY(0); }
+
+    @media (max-width: 1100px) {
+      .layout { grid-template-columns: 1fr; }
+      .sidebar { position: static; grid-template-columns: repeat(2,minmax(0,1fr)); }
+      .stage-card { grid-column: 1 / -1; }
+      .stage-list { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 0 16px; }
+      .controls { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 760px) {
+      :root { --header-h: 64px; }
+      .shell, .topbar-inner { width: min(100% - 20px, 1440px); }
+      .brand-copy span { display: none; }
+      .top-actions .text-action { display: none; }
+      .hero { padding: 25px 20px; border-radius: 23px; }
+      h1 { font-size: 43px; }
+      .stats-grid { grid-template-columns: repeat(2,minmax(0,1fr)); }
+      .progress-panel { grid-template-columns: auto 1fr; }
+      .progress-actions { grid-column: 1 / -1; flex-direction: row; }
+      .controls { position: static; grid-template-columns: 1fr; }
+      .sidebar { grid-template-columns: 1fr; }
+      .stage-card { grid-column: auto; }
+      .stage-list { grid-template-columns: 1fr; }
+      .card-columns { grid-template-columns: 1fr; }
+      .topic-list { grid-template-columns: 1fr; }
+      .card-main { padding: 18px 17px 15px 20px; }
+      summary, .notes-wrap { padding-left: 20px; padding-right: 17px; }
+      .check-box { width: 45px; height: 45px; }
+      .day-card.completed:after { display: none; }
+    }
+    @media (max-width: 460px) {
+      .stats-grid { grid-template-columns: 1fr; }
+      .progress-ring { width: 92px; height: 92px; }
+      .progress-ring:before { width: 68px; height: 68px; }
+      .progress-ring span { font-size: 18px; }
+      .top-actions { gap: 5px; }
+      .icon-btn { width: 38px; height: 38px; }
+      .card-top { gap: 9px; }
+    }
+
+    @media print {
+      body { background: #fff; color: #111; }
+      .topbar, .controls, .sidebar, .progress-actions, .check-control, .ambient, .toast { display: none !important; }
+      .shell { width: 100%; padding: 0; }
+      .hero, .stat-card, .progress-panel, .day-card, .footer { box-shadow: none; background: #fff; color: #111; border-color: #bbb; break-inside: avoid; }
+      .layout { display: block; }
+      .objective, .activity p, .footer, .hero-copy, .stat-sub, .stat-label, .progress-copy p, .topic-list { color: #333; }
+      .day-card { margin-bottom: 10px; }
+      .notes-wrap textarea { border: 1px solid #aaa; color: #111; background: #fff; }
+    }
+
+    /* Vibrant learning-resource edition */
+    :root,
+    body.light {
+      --bg: #f5f8ff;
+      --bg-2: #fff8fb;
+      --panel: rgba(255,255,255,.94);
+      --panel-solid: #ffffff;
+      --panel-2: #f7f9ff;
+      --text: #18213b;
+      --muted: #63708b;
+      --line: rgba(65,76,125,.13);
+      --line-strong: rgba(58,73,136,.25);
+      --accent: #006dff;
+      --accent-2: #7c3aed;
+      --success: #0bab74;
+      --warning: #ee8b00;
+      --danger: #e74068;
+      --shadow: 0 22px 70px rgba(59,74,135,.16);
+    }
+    body {
+      background:
+        radial-gradient(circle at 4% 4%, rgba(0,174,255,.20), transparent 28%),
+        radial-gradient(circle at 92% 8%, rgba(139,92,246,.18), transparent 25%),
+        radial-gradient(circle at 78% 82%, rgba(255,92,146,.13), transparent 30%),
+        linear-gradient(150deg, #f6fbff 0%, #f7f4ff 42%, #fff8fb 72%, #fffdf7 100%);
+    }
+    body:not(.light) {
+      --bg: #12172d;
+      --bg-2: #251a38;
+      --panel: rgba(28,33,62,.92);
+      --panel-solid: #1d2342;
+      --panel-2: #242b4f;
+      --text: #f5f7ff;
+      --muted: #b9c1dc;
+      --line: rgba(255,255,255,.12);
+      --line-strong: rgba(255,255,255,.23);
+      background:
+        radial-gradient(circle at 5% 4%, rgba(0,174,255,.23), transparent 28%),
+        radial-gradient(circle at 94% 8%, rgba(139,92,246,.25), transparent 26%),
+        radial-gradient(circle at 76% 85%, rgba(255,92,146,.17), transparent 31%),
+        linear-gradient(150deg, #10172d 0%, #171d39 48%, #2b1937 100%);
+    }
+    .topbar { background: rgba(255,255,255,.78); box-shadow: 0 8px 30px rgba(54,68,118,.08); }
+    body:not(.light) .topbar { background: rgba(17,22,45,.80); }
+    .brand-mark { color: white; background: linear-gradient(135deg,#00b8ff,#006dff 45%,#7c3aed 74%,#ff4d8d); box-shadow: 0 11px 30px rgba(0,109,255,.28); }
+    .hero {
+      border-color: rgba(80,97,160,.14);
+      background:
+        radial-gradient(circle at 95% 5%, rgba(255,105,180,.20), transparent 30%),
+        radial-gradient(circle at 8% 100%, rgba(0,193,255,.20), transparent 36%),
+        linear-gradient(125deg, rgba(255,255,255,.98), rgba(239,246,255,.96) 34%, rgba(246,240,255,.96) 66%, rgba(255,241,247,.96));
+      box-shadow: 0 30px 90px rgba(77,79,145,.18);
+    }
+    body:not(.light) .hero { background: linear-gradient(135deg,rgba(38,49,91,.96),rgba(62,37,87,.94)); }
+    .hero:after { border-color: rgba(124,58,237,.18); box-shadow: 0 0 0 35px rgba(0,109,255,.035),0 0 0 75px rgba(255,77,141,.025); }
+    .eyebrow { color: #005bd7; border-color: rgba(0,109,255,.22); background: rgba(0,109,255,.07); }
+    body:not(.light) .eyebrow { color: #76d9ff; }
+    .gradient-text { background: linear-gradient(90deg,#006dff 0%,#6846e8 48%,#ee3d8a 82%,#ff8a00 100%); -webkit-background-clip:text; background-clip:text; color:transparent; }
+    .meta-pill { background: rgba(255,255,255,.72); box-shadow: 0 7px 20px rgba(56,75,130,.07); }
+    body:not(.light) .meta-pill { background: rgba(255,255,255,.05); }
+    .stats-grid .stat-card { position:relative; overflow:hidden; box-shadow: 0 14px 34px rgba(66,79,135,.11); }
+    .stats-grid .stat-card:before { content:""; position:absolute; inset:0 0 auto 0; height:5px; }
+    .stats-grid .stat-card:nth-child(1):before { background:linear-gradient(90deg,#00b8ff,#006dff); }
+    .stats-grid .stat-card:nth-child(2):before { background:linear-gradient(90deg,#7c3aed,#c13ee7); }
+    .stats-grid .stat-card:nth-child(3):before { background:linear-gradient(90deg,#ff4d8d,#ff7d4d); }
+    .stats-grid .stat-card:nth-child(4):before { background:linear-gradient(90deg,#00b894,#7ecb20); }
+    .progress-panel,.controls,.side-card { box-shadow: 0 16px 44px rgba(61,75,130,.10); }
+    .controls { background: rgba(255,255,255,.86); }
+    body:not(.light) .controls { background: rgba(29,35,66,.88); }
+    .day-grid { display:grid; gap:16px; }
+    .day-card { box-shadow:0 15px 42px rgba(64,77,129,.10); }
+    .day-card.study:hover { transform:translateY(-4px); box-shadow:0 23px 54px rgba(57,72,132,.15); }
+    .day-card.study:before { width:6px; background:linear-gradient(180deg,hsl(var(--stage-h) 88% 57%),hsl(calc(var(--stage-h) + 42) 88% 62%)); }
+    .date-pill { background:rgba(0,109,255,.06); color:#31547e; }
+    body:not(.light) .date-pill { color:#c5d7ff; }
+    .stage-pill { color:hsl(var(--stage-h) 76% 38%); background:hsl(var(--stage-h) 90% 55% / .10); }
+    body:not(.light) .stage-pill { color:hsl(var(--stage-h) 90% 76%); }
+    .activity { background:linear-gradient(145deg,rgba(245,248,255,.96),rgba(255,255,255,.92)); }
+    body:not(.light) .activity { background:rgba(255,255,255,.035); }
+    .resource-section { margin-top:18px; padding-top:17px; border-top:1px dashed var(--line-strong); }
+    .resource-heading { display:flex; align-items:end; justify-content:space-between; gap:12px; margin-bottom:11px; }
+    .resource-heading > div { display:grid; gap:2px; }
+    .resource-heading strong { font-size:14px; }
+    .resource-eyebrow { color:#6f45e8; font-size:10px; font-weight:900; letter-spacing:.11em; text-transform:uppercase; }
+    .resource-time { color:var(--muted); font-size:11px; font-weight:800; }
+    .resource-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; }
+    .resource-card { position:relative; display:grid; grid-template-columns:46px minmax(0,1fr) auto; align-items:center; gap:12px; min-height:112px; padding:14px; border:1px solid transparent; border-radius:17px; text-decoration:none; overflow:hidden; transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease; }
+    .resource-card:before { content:""; position:absolute; width:120px; height:120px; right:-55px; top:-68px; border-radius:50%; opacity:.16; }
+    .resource-card:hover { transform:translateY(-3px); }
+    .video-resource { color:#4c1830; background:linear-gradient(135deg,#fff1f5 0%,#fff6f0 100%); border-color:rgba(239,62,102,.16); box-shadow:0 12px 28px rgba(236,72,105,.10); }
+    .video-resource:before { background:#ff2d55; }
+    .video-resource:hover { border-color:rgba(239,62,102,.35); box-shadow:0 18px 38px rgba(236,72,105,.16); }
+    .docs-resource { color:#123b67; background:linear-gradient(135deg,#edf7ff 0%,#effcff 100%); border-color:rgba(0,109,255,.15); box-shadow:0 12px 28px rgba(0,109,255,.09); }
+    .docs-resource:before { background:#00aeea; }
+    .docs-resource:hover { border-color:rgba(0,109,255,.34); box-shadow:0 18px 38px rgba(0,109,255,.15); }
+    body:not(.light) .video-resource { color:#fff0f5; background:linear-gradient(135deg,rgba(123,39,72,.62),rgba(89,48,46,.64)); }
+    body:not(.light) .docs-resource { color:#e7f4ff; background:linear-gradient(135deg,rgba(28,78,130,.63),rgba(22,81,103,.62)); }
+    .resource-icon { width:46px; height:46px; display:grid; place-items:center; border-radius:14px; color:white; box-shadow:0 9px 22px rgba(0,0,0,.13); }
+    .resource-icon svg { width:24px; height:24px; }
+    .video-resource .resource-icon { background:linear-gradient(135deg,#ff164f,#ff6a3d); }
+    .docs-resource .resource-icon { background:linear-gradient(135deg,#0078ff,#00b8dc); }
+    .resource-copy { min-width:0; display:grid; gap:3px; }
+    .resource-type { font-size:9px; font-weight:950; letter-spacing:.11em; text-transform:uppercase; opacity:.72; }
+    .resource-copy strong { font-size:13px; line-height:1.25; }
+    .resource-copy small { color:currentColor; opacity:.72; font-size:10.5px; line-height:1.35; }
+    .resource-arrow { align-self:start; font-size:18px; font-weight:900; opacity:.7; }
+    .check-control input:checked + .check-box { background:linear-gradient(135deg,#0dbb78,#6dcf49); color:white; border-color:transparent; box-shadow:0 10px 28px rgba(11,171,116,.24); }
+    .progress-ring { background:conic-gradient(#0bb579 var(--p),rgba(76,94,151,.10) 0); box-shadow:0 14px 34px rgba(11,181,121,.15); }
+    .progress-bar { background:rgba(72,87,138,.10); }
+    .progress-bar > i { background:linear-gradient(90deg,#0bb579,#00b8e6,#6c4ee8); }
+    .primary-btn { color:white; background:linear-gradient(135deg,#006dff,#7c3aed 65%,#ee3d8a); box-shadow:0 10px 24px rgba(100,68,220,.22); }
+    .footer { background:linear-gradient(135deg,rgba(237,247,255,.92),rgba(251,241,255,.92)); }
+    body:not(.light) .footer { background:rgba(255,255,255,.035); }
+    @media (max-width: 850px) { .resource-grid { grid-template-columns:1fr; } .resource-heading { align-items:flex-start; flex-direction:column; } }
+    @media print { .resource-card { break-inside:avoid; } .resource-grid { grid-template-columns:1fr 1fr !important; } }
+
+    /* Prevent the stage-progress sidebar from overflowing into the lesson column. */
+    .layout > *,
+    .sidebar,
+    .sidebar > *,
+    .side-card,
+    .stage-list,
+    .stage-row,
+    .stage-head,
+    .schedule-head,
+    #schedule {
+      min-width: 0;
+    }
+    .sidebar {
+      width: 100%;
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .side-card {
+      width: 100%;
+      max-width: 100%;
+      overflow: hidden;
+    }
+    .stage-head {
+      width: 100%;
+    }
+    .stage-name {
+      flex: 1 1 auto;
+      width: 0;
+    }
+    .stage-count {
+      flex: 0 0 auto;
+    }
+
+  </style>
+</head>
+<body>
+  <div class="ambient" aria-hidden="true"><div class="orb one"></div><div class="orb two"></div></div>
+
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div class="brand">
+        <div class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 18h10a4 4 0 0 0 .65-7.95A6 6 0 0 0 6.2 8.3 4.5 4.5 0 0 0 7 18Z"/><path d="M9 14h6M12 11v6"/></svg>
+        </div>
+        <div class="brand-copy">
+          <strong>Azure Learning Sprint</strong>
+          <span>44 guided sessions · videos + docs + labs · progress saved locally</span>
+        </div>
+      </div>
+      <div class="top-actions">
+        <button class="ghost-btn small text-action" id="jumpBtn" type="button">Jump to today</button>
+        <button class="icon-btn" id="printBtn" type="button" aria-label="Print plan" title="Print plan">
+          <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><path d="M6 14h12v8H6z"/></svg>
+        </button>
+        <button class="icon-btn" id="themeBtn" type="button" aria-label="Toggle theme" title="Toggle light/dark theme">
+          <svg id="themeIcon" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3a6 6 0 1 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="shell">
+    <section class="hero">
+      <span class="eyebrow"><span class="eyebrow-dot"></span> Tailored to Azure migration work</span>
+      <h1>Learn Azure with a vibrant <span class="gradient-text">60-day guided sprint.</span></h1>
+      <p class="hero-copy">Every weekday gives you one focused topic, a carefully matched YouTube video, official documentation, a hands-on lab, evidence to keep, notes and a completion tick that stays saved in your browser.</p>
+      <div class="hero-meta">
+        <span class="meta-pill"><b>Start</b> 06 Oct 2026</span>
+        <span class="meta-pill"><b>Finish</b> 04 Dec 2026</span>
+        <span class="meta-pill"><b>Study</b> Monday-Friday</span>
+        <span class="meta-pill"><b>Rest</b> Saturday-Sunday</span>
+      </div>
+      <div class="reality-note">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/></svg>
+        <p><strong>Important scope:</strong> your original roadmap estimates 265-380 hours. Sixty calendar days with weekends off provides 44 study sessions, or 88 hours. This plan covers every stage at a practical working-foundation level; deeper mastery continues after day 60.</p>
+      </div>
+    </section>
+
+    <section class="stats-grid" aria-label="Plan statistics">
+      <article class="stat-card"><div class="stat-label">Calendar sprint</div><div class="stat-value">60 days</div><div class="stat-sub">06 Oct to 04 Dec 2026</div></article>
+      <article class="stat-card"><div class="stat-label">Learning sessions</div><div class="stat-value">44</div><div class="stat-sub">Weekdays only</div></article>
+      <article class="stat-card"><div class="stat-label">Focused learning</div><div class="stat-value">88 hrs</div><div class="stat-sub">2 hours per study day</div></article>
+      <article class="stat-card"><div class="stat-label">Curated resources</div><div class="stat-value">88 links</div><div class="stat-sub">44 videos + 44 documentation pages</div></article>
+    </section>
+
+    <section class="progress-panel" aria-label="Overall progress">
+      <div class="progress-ring" id="progressRing"><span id="progressPct">0%</span></div>
+      <div class="progress-copy">
+        <h2 id="progressTitle">Your sprint is ready</h2>
+        <p id="progressText">Complete a session and tick it off. Your progress and notes stay in this browser.</p>
+        <div class="progress-bar" aria-hidden="true"><i id="progressBar"></i></div>
+      </div>
+      <div class="progress-actions">
+        <button class="ghost-btn" id="exportBtn" type="button">Export progress</button>
+        <button class="ghost-btn" id="importBtn" type="button">Import progress</button>
+        <input id="importInput" type="file" accept="application/json" hidden>
+      </div>
+    </section>
+
+    <section class="controls" aria-label="Schedule filters">
+      <input class="control" id="searchInput" type="search" placeholder="Search topics, videos, docs, labs or stages..." aria-label="Search schedule">
+      <select class="control" id="stageFilter" aria-label="Filter by stage"><option value="all">All stages</option></select>
+      <select class="control" id="statusFilter" aria-label="Filter by status"><option value="all">All statuses</option><option value="pending">Pending</option><option value="completed">Completed</option></select>
+      <label class="toggle-wrap"><input id="weekendToggle" type="checkbox" checked> Show weekends</label>
+    </section>
+
+    <div class="layout">
+      <aside class="sidebar">
+        <section class="side-card stage-card">
+          <h3>Progress by stage</h3>
+          <div class="stage-list" id="stageProgress"></div>
+        </section>
+        <section class="side-card">
+          <h3>Daily 2-hour rhythm</h3>
+          <div class="study-rhythm">
+            <div class="rhythm-item"><span class="rhythm-time">35 min</span><div><b>Watch</b><span>Topic-specific YouTube lesson</span></div></div>
+            <div class="rhythm-item"><span class="rhythm-time">30 min</span><div><b>Read</b><span>Official documentation and examples</span></div></div>
+            <div class="rhythm-item"><span class="rhythm-time">45 min</span><div><b>Build</b><span>Hands-on lab or architecture task</span></div></div>
+            <div class="rhythm-item"><span class="rhythm-time">10 min</span><div><b>Recall</b><span>Notes, quiz and next-day question</span></div></div>
+          </div>
+        </section>
+        <section class="side-card">
+          <h3>Cost-safety rule</h3>
+          <p class="cost-note">Prefer Microsoft Learn sandboxes or a controlled test subscription. Check pricing before deployment, set budgets where possible, and delete disposable resources immediately after each lab.</p>
+        </section>
+        <button class="danger-btn" id="resetBtn" type="button">Reset all progress</button>
+      </aside>
+
+      <section>
+        <div class="schedule-head">
+          <div><h2>Your day-by-day plan</h2><p>Watch the selected video, read the official guide, complete the lab, capture evidence, then tick the session.</p></div>
+          <span class="result-count" id="resultCount"></span>
+        </div>
+        <div id="schedule"></div>
+      </section>
+    </div>
+
+    <footer class="footer">
+      <strong>How saving works:</strong> ticks, notes and theme preference are stored with your browser's localStorage for this file. Keep the same HTML file path and browser for automatic persistence. Use <strong>Export progress</strong> regularly so you can restore the data after moving the file or clearing browser storage.
+    </footer>
+  </main>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script>
+    const LESSONS = [{"id":"d01","stage":1,"stageName":"Cloud + Azure fundamentals","title":"Build the Azure mental model","objective":"Understand what Azure provides, how cloud responsibility is divided, and how to navigate the platform safely.","subtopics":["Cloud characteristics and consumption model","IaaS, PaaS, SaaS and serverless","Public, private and hybrid cloud","Shared-responsibility model","Regions, availability zones and paired regions","Azure portal, Cloud Shell, Azure CLI and PowerShell"],"lab":"Open Azure Portal and Cloud Shell. Run az account show and az account list. Locate subscriptions, tenants, regions and resource providers. Create and delete one disposable resource group only if you have a safe sandbox.","deliverable":"Create a one-page Azure glossary and a diagram showing tenant -> subscription -> resource group -> resource.","videoUrl":"https://www.youtube.com/watch?v=BqNbzeuxTaE","videoTitle":"Microsoft Azure 101 — complete beginner overview","videoNote":"Start with the first 35 minutes for the Azure mental model.","docUrl":"https://learn.microsoft.com/en-us/training/paths/microsoft-azure-fundamentals-describe-cloud-concepts/","docTitle":"Describe cloud concepts — Microsoft Learn","docSource":"Microsoft Learn"},{"id":"d02","stage":2,"stageName":"Subscriptions, management groups, resource groups and ARM","title":"Azure hierarchy, scope and resource organization","objective":"Learn how Azure organizes ownership, billing, access and governance across scopes.","subtopics":["Microsoft Entra tenant and Azure subscription relationship","Management groups and inheritance","Subscriptions and billing boundaries","Resource groups and resource lifecycle","Tags, naming conventions and resource locks","Resource providers, quotas and regional availability"],"lab":"Map your work environment into management group, subscription, resource group and resource layers. Draft a naming and tagging standard for non-prod and prod.","deliverable":"A scope diagram plus a table of required tags: application, owner, environment, cost center and data classification.","videoUrl":"https://www.youtube.com/watch?v=t-i4XrygWCc&t=769s","videoTitle":"Azure Governance Master Class — scopes and organization","videoNote":"Watch from 12:49 through the resource-group and naming sections.","docUrl":"https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/ready/azure-setup-guide/organize-resources","docTitle":"Organize Azure resources and management hierarchy","docSource":"Microsoft Learn"},{"id":"d03","stage":2,"stageName":"Subscriptions, management groups, resource groups and ARM","title":"Azure Resource Manager and deployment behavior","objective":"Understand the control plane, resource IDs, deployments and why infrastructure changes are traceable.","subtopics":["Azure Resource Manager control plane vs data plane","Resource IDs and provider namespaces","API versions and resource types","ARM deployments and deployment history","Activity Log and change visibility","ARM templates and Bicep overview"],"lab":"Create a small resource through the portal, inspect its full resource ID, deployment record and Activity Log, then remove it. Compare the portal action with the generated template view.","deliverable":"Annotate one real resource ID and explain every segment in plain language.","videoUrl":"https://www.youtube.com/watch?v=t-i4XrygWCc&t=2930s","videoTitle":"Azure Resource Manager, RBAC and policy","videoNote":"Start at 48:50 and focus on ARM, scope and deployment behavior.","docUrl":"https://learn.microsoft.com/en-us/azure/azure-resource-manager/management/overview","docTitle":"Azure Resource Manager overview","docSource":"Microsoft Learn"},{"id":"d04","stage":3,"stageName":"Entra ID, RBAC and managed identities","title":"Microsoft Entra ID fundamentals","objective":"Understand identity objects, authentication and the difference between directory and Azure resource authorization.","subtopics":["Tenants, users, groups and devices","Authentication vs authorization","Security groups and group-based access","MFA and Conditional Access concepts","Enterprise applications and app registrations","Directory roles vs Azure RBAC roles"],"lab":"In a read-only or sandbox directory, inspect users, groups, enterprise applications and tenant information. Build a simple identity flow for a user signing in to the Azure portal.","deliverable":"A comparison sheet: Entra role, Azure RBAC role and application permission.","videoUrl":"https://www.youtube.com/watch?v=megA6BPpYqo&t=1132s","videoTitle":"Microsoft Entra ID Master Class — identity foundations","videoNote":"Watch from 18:52 through authentication and authorization.","docUrl":"https://learn.microsoft.com/en-us/entra/fundamentals/what-is-entra","docTitle":"What is Microsoft Entra?","docSource":"Microsoft Learn"},{"id":"d05","stage":3,"stageName":"Entra ID, RBAC and managed identities","title":"Azure RBAC and least-privilege access","objective":"Learn how permissions are assigned, inherited and reviewed at different Azure scopes.","subtopics":["Security principal, role definition and scope","Built-in roles and custom roles","Scope inheritance and effective access","Owner, Contributor, Reader and User Access Administrator","Least privilege and separation of duties","Privileged Identity Management concept"],"lab":"Use Access control (IAM) and Check access on a test resource group. Build a role matrix for application developer, platform engineer, security reviewer and auditor.","deliverable":"A least-privilege access matrix with role, scope, justification and approver.","videoUrl":"https://www.youtube.com/watch?v=t-i4XrygWCc&t=3268s","videoTitle":"Azure RBAC and least privilege","videoNote":"Start at 54:28; continue through RBAC and PIM concepts.","docUrl":"https://learn.microsoft.com/en-us/azure/role-based-access-control/overview","docTitle":"Azure role-based access control overview","docSource":"Microsoft Learn"},{"id":"d06","stage":3,"stageName":"Entra ID, RBAC and managed identities","title":"Managed identities, service principals and workload access","objective":"Understand how applications authenticate to Azure services without hard-coded credentials.","subtopics":["System-assigned and user-assigned managed identities","Service principals and app registrations","OAuth tokens and resource audiences at a high level","Role assignments for workloads","Federated workload identity and service connections","Credential rotation and secretless design"],"lab":"Enable a managed identity on a sandbox App Service or Function App. Grant only the minimum Key Vault read permission and document the access flow. Use a design-only lab if deployment is unavailable.","deliverable":"A sequence diagram showing application -> managed identity -> token -> Key Vault.","videoUrl":"https://www.youtube.com/watch?v=rC1TV0_sIrM","videoTitle":"Azure Managed Identity deep dive","videoNote":"Focus on system-assigned, user-assigned and secretless access.","docUrl":"https://learn.microsoft.com/en-us/entra/identity/managed-identities-azure-resources/overview","docTitle":"Managed identities for Azure resources","docSource":"Microsoft Learn"},{"id":"d07","stage":4,"stageName":"VNets, subnets, routing, NSG, DNS, peering and firewall","title":"VNet and subnet design with CIDR planning","objective":"Learn Azure IP address planning and design a network that can grow without overlap.","subtopics":["IPv4 and CIDR notation","VNet and subnet boundaries","Azure-reserved subnet addresses","Address-space overlap and peering limitations","Subnet sizing and future growth","Subnet delegation and workload placement"],"lab":"Design 10.20.0.0/16 with separate application, private endpoint, integration and management subnets. Calculate usable addresses and leave expansion space.","deliverable":"An IP allocation table with CIDR, purpose, usable capacity and owner.","videoUrl":"https://www.youtube.com/watch?v=nDtCSQyG_I8&t=41s","videoTitle":"Azure Networking Master Class — VNets and subnets","videoNote":"Watch from 00:41 through the core VNet design sections.","docUrl":"https://learn.microsoft.com/en-us/azure/virtual-network/concepts-and-best-practices","docTitle":"Azure Virtual Network concepts and best practices","docSource":"Microsoft Learn"},{"id":"d08","stage":4,"stageName":"VNets, subnets, routing, NSG, DNS, peering and firewall","title":"Network Security Groups and effective rules","objective":"Control subnet and NIC traffic with ordered, stateful security rules.","subtopics":["Inbound and outbound NSG processing","Rule priority and default rules","Service tags and application security groups","Subnet-level vs NIC-level association","Stateful connection behavior","Effective security rules and flow visibility"],"lab":"Create a sandbox NSG that permits only required HTTPS traffic and denies an unnecessary path. Inspect effective rules and explain why each packet is allowed or denied.","deliverable":"A rule table containing source, destination, port, protocol, priority and business reason.","videoUrl":"https://www.youtube.com/watch?v=nDtCSQyG_I8&t=6559s","videoTitle":"Network Security Groups and effective rules","videoNote":"Start at 1:49:19 and study NSG processing and rule priority.","docUrl":"https://learn.microsoft.com/en-us/azure/virtual-network/network-security-groups-overview","docTitle":"Network Security Groups overview","docSource":"Microsoft Learn"},{"id":"d09","stage":4,"stageName":"VNets, subnets, routing, NSG, DNS, peering and firewall","title":"Azure routing, UDRs and next-hop decisions","objective":"Understand how Azure chooses a route and how forced egress through a virtual appliance works.","subtopics":["System routes and user-defined routes","Longest-prefix match","Next-hop types","Default route 0.0.0.0/0","Virtual appliances and IP forwarding","Gateway route propagation and effective routes"],"lab":"Map the CQD path: application subnet -> route table -> 0.0.0.0/0 -> virtual appliance -> hub. Inspect effective routes in a safe environment or use the existing evidence read-only.","deliverable":"A packet-path diagram with every routing decision and next hop labeled.","videoUrl":"https://www.youtube.com/watch?v=nDtCSQyG_I8&t=3951s","videoTitle":"Azure routing, UDRs and virtual appliances","videoNote":"Start at 1:05:51 and trace route selection and forced tunneling.","docUrl":"https://learn.microsoft.com/en-us/azure/virtual-network/virtual-networks-udr-overview","docTitle":"Virtual network traffic routing","docSource":"Microsoft Learn"},{"id":"d10","stage":4,"stageName":"VNets, subnets, routing, NSG, DNS, peering and firewall","title":"VNet peering and hub-spoke architecture","objective":"Learn how spoke networks connect through a shared hub and which peering flags affect transit.","subtopics":["Regional and global VNet peering","Allow virtual network access","Allow forwarded traffic","Gateway transit and use remote gateways","Hub-spoke topology","Peering status, synchronization and non-transitive behavior"],"lab":"Draw a hub-spoke design for non-prod and prod. Mark DNS, firewall, shared services, route tables and the direction of ingress and egress.","deliverable":"A hub-spoke diagram plus a peering configuration checklist.","videoUrl":"https://www.youtube.com/watch?v=nDtCSQyG_I8&t=3350s","videoTitle":"VNet peering and hub-spoke connectivity","videoNote":"Watch from 55:50 through routing and transit considerations.","docUrl":"https://learn.microsoft.com/en-us/azure/virtual-network/virtual-network-peering-overview","docTitle":"Azure Virtual Network peering","docSource":"Microsoft Learn"},{"id":"d11","stage":4,"stageName":"VNets, subnets, routing, NSG, DNS, peering and firewall","title":"Azure DNS and private name resolution","objective":"Understand how public and private names resolve for Azure workloads and private endpoints.","subtopics":["Azure public DNS zones","Private DNS zones and VNet links","Auto-registration vs resolution links","Custom DNS servers and forwarding","Azure DNS Private Resolver concept","Split-horizon DNS and troubleshooting order"],"lab":"Create a private DNS design for a storage or Key Vault private endpoint. Trace a lookup from the application subnet to the private IP address.","deliverable":"A DNS flow diagram and a five-step DNS troubleshooting checklist.","videoUrl":"https://www.youtube.com/watch?v=nDtCSQyG_I8&t=9649s","videoTitle":"Azure DNS and private DNS zones","videoNote":"Start at 2:40:49 for public and private Azure DNS.","docUrl":"https://learn.microsoft.com/en-us/azure/dns/private-dns-overview","docTitle":"Azure Private DNS overview","docSource":"Microsoft Learn"},{"id":"d12","stage":4,"stageName":"VNets, subnets, routing, NSG, DNS, peering and firewall","title":"Azure Firewall, NVAs and enterprise egress","objective":"Understand centralized traffic inspection and how least-privilege outbound access is implemented.","subtopics":["Azure Firewall tiers and firewall policy","Application, network and DNAT rules","Rule collection groups and priorities","FQDNs, service tags and IP destinations","SNAT, forced tunneling and central egress","Firewall logs and compliance evidence"],"lab":"Create a firewall request matrix for one application: source subnet, destination FQDN, protocol, port, business justification and validation owner.","deliverable":"A complete least-privilege egress rule request ready for review.","videoUrl":"https://www.youtube.com/watch?v=nVZYDhB_M64&t=9490s","videoTitle":"AZ-700 guide — Azure Firewall and secure egress","videoNote":"Start at 2:38:10 and continue into network monitoring.","docUrl":"https://learn.microsoft.com/en-us/azure/firewall/overview","docTitle":"What is Azure Firewall?","docSource":"Microsoft Learn"},{"id":"d13","stage":4,"stageName":"VNets, subnets, routing, NSG, DNS, peering and firewall","title":"Network troubleshooting workflow","objective":"Diagnose connectivity problems methodically instead of changing multiple controls at once.","subtopics":["Network Watcher overview","Connection troubleshoot","IP flow verify and NSG diagnostics","Next hop and effective routes","DNS tools: nslookup, dig and Resolve-DnsName","Packet path, logs and evidence collection"],"lab":"Create or simulate three failures: blocked NSG, incorrect route and missing private DNS link. Diagnose each with a written evidence trail and only then propose a fix.","deliverable":"A repeatable network incident runbook with decision points.","videoUrl":"https://www.youtube.com/watch?v=nVZYDhB_M64&t=10048s","videoTitle":"Azure network monitoring and troubleshooting","videoNote":"Start at 2:47:28 for Network Watcher and troubleshooting tools.","docUrl":"https://learn.microsoft.com/en-us/azure/network-watcher/network-watcher-overview","docTitle":"Azure Network Watcher overview","docSource":"Microsoft Learn"},{"id":"d14","stage":5,"stageName":"Private endpoints, Private Link and service endpoints","title":"Private Link and private endpoints","objective":"Learn how PaaS services receive private IP connectivity without exposing the public internet path.","subtopics":["Private Link service model","Private endpoint NIC and private IP","Connection approval workflow","Private DNS zone integration","Public network access controls","Private endpoint subnet design"],"lab":"Design a storage account private endpoint from an application subnet. Include subnet, DNS zone, records, approval and test steps.","deliverable":"An end-to-end private endpoint implementation checklist.","videoUrl":"https://www.youtube.com/watch?v=nDtCSQyG_I8&t=8780s","videoTitle":"Private Link and private endpoints","videoNote":"Start at 2:26:20 and continue through DNS considerations.","docUrl":"https://learn.microsoft.com/en-us/azure/private-link/private-endpoint-overview","docTitle":"Azure Private Endpoint overview","docSource":"Microsoft Learn"},{"id":"d15","stage":5,"stageName":"Private endpoints, Private Link and service endpoints","title":"Service endpoints, subnet delegation and selection criteria","objective":"Differentiate private endpoints from service endpoints and understand subnet delegation.","subtopics":["Virtual network service endpoints","Service endpoint routing and service firewalls","Private endpoint vs service endpoint","Subnet delegation","PaaS VNet integration patterns","Security and DNS trade-offs"],"lab":"Build a decision table for Storage, Key Vault, SQL, App Service and Function Apps: public access, service endpoint, private endpoint or delegated subnet.","deliverable":"A technology-selection matrix with reasons and limitations.","videoUrl":"https://www.youtube.com/watch?v=nDtCSQyG_I8&t=8282s","videoTitle":"Service endpoints versus private access","videoNote":"Start at 2:18:02; compare service endpoints and Private Link.","docUrl":"https://learn.microsoft.com/en-us/azure/virtual-network/virtual-network-service-endpoints-overview","docTitle":"Virtual Network service endpoints","docSource":"Microsoft Learn"},{"id":"d16","stage":5,"stageName":"Private endpoints, Private Link and service endpoints","title":"End-to-end private application connectivity","objective":"Combine VNet integration, private endpoints, DNS and firewall rules into one secure application flow.","subtopics":["App Service and Function outbound VNet integration","Private endpoint for inbound access","Storage, Cosmos DB and Key Vault private access","Private DNS zone links","Route-all and centralized egress concepts","Validation from application to dependency"],"lab":"Design a Function App that reads secrets from Key Vault and writes to Cosmos DB using private connectivity. Build it in a sandbox where possible, otherwise produce a deployable design.","deliverable":"A secure reference architecture and test checklist.","videoUrl":"https://www.youtube.com/watch?v=nDtCSQyG_I8&t=8936s","videoTitle":"Private endpoint DNS design","videoNote":"Start at 2:28:56 and focus on resolution paths and zones.","docUrl":"https://learn.microsoft.com/en-us/azure/private-link/private-endpoint-dns","docTitle":"Azure Private Endpoint DNS configuration","docSource":"Microsoft Learn"},{"id":"d17","stage":6,"stageName":"VMs, App Service, Function Apps and containers","title":"Azure Virtual Machines fundamentals","objective":"Understand VM components, lifecycle and secure administration.","subtopics":["VM sizes and generations","Managed disks and performance tiers","NICs, public IPs and accelerated networking","Images, extensions and cloud-init","SSH, RDP and Azure Bastion","VM status, boot diagnostics and cost controls"],"lab":"Use a Microsoft Learn sandbox or low-cost lab to deploy a small VM without an unnecessary public IP. Inspect disks, NIC, identity and diagnostics, then delete all resources.","deliverable":"A VM build checklist that includes security, monitoring and cleanup.","videoUrl":"https://www.youtube.com/watch?v=KRBFVqgxyo4&t=35s","videoTitle":"Azure Virtual Machines Master Class","videoNote":"Watch from 00:35 through VM building blocks and sizing.","docUrl":"https://learn.microsoft.com/en-us/azure/virtual-machines/overview","docTitle":"Azure Virtual Machines overview","docSource":"Microsoft Learn"},{"id":"d18","stage":6,"stageName":"VMs, App Service, Function Apps and containers","title":"VM resilience, scale and maintenance","objective":"Choose the correct availability and scaling model for VM-based workloads.","subtopics":["Availability sets and fault/update domains","Availability zones","Virtual Machine Scale Sets","Autoscale signals and health probes","Image management and patching concepts","Snapshots, disks and update orchestration"],"lab":"Design a two-tier VM workload with zone resilience, load balancing, autoscale, patching and monitoring. Estimate what fails when a zone or instance is unavailable.","deliverable":"A high-availability VM architecture with failure-mode notes.","videoUrl":"https://www.youtube.com/watch?v=KRBFVqgxyo4&t=4369s","videoTitle":"VM maintenance, patching and scale sets","videoNote":"Start at 1:12:49 and continue through VM Scale Sets.","docUrl":"https://learn.microsoft.com/en-us/azure/virtual-machine-scale-sets/overview","docTitle":"Azure Virtual Machine Scale Sets overview","docSource":"Microsoft Learn"},{"id":"d19","stage":6,"stageName":"VMs, App Service, Function Apps and containers","title":"Azure App Service from deployment to networking","objective":"Host a web application securely and understand plans, slots, settings and scale.","subtopics":["App Service plans and pricing tiers","Web Apps on Windows and Linux","Deployment methods and deployment slots","Application settings and Key Vault references","Managed identity and custom domains","VNet integration, private endpoints and autoscale"],"lab":"Deploy a simple web app to a sandbox, configure one slot or environment setting, enable managed identity and inspect networking options. Remove the app after testing if it incurs cost.","deliverable":"An App Service production-readiness checklist.","videoUrl":"https://www.youtube.com/watch?v=4BwyqmRTrx8","videoTitle":"Azure App Service introduction","videoNote":"A focused overview of plans, apps, deployment and scaling.","docUrl":"https://learn.microsoft.com/en-us/azure/app-service/overview","docTitle":"Azure App Service overview","docSource":"Microsoft Learn"},{"id":"d20","stage":6,"stageName":"VMs, App Service, Function Apps and containers","title":"Azure Functions and event-driven workloads","objective":"Understand triggers, bindings, hosting options and secure dependency access.","subtopics":["Function triggers and bindings","Hosting plans and scaling behavior","Storage account dependency","Application settings and managed identity","Networking and private access","Monitoring, retries and durable patterns overview"],"lab":"Create an HTTP-triggered function or follow a guided lab. Configure a secret through Key Vault reference or managed identity, then review logs in Application Insights.","deliverable":"A function execution-flow diagram including trigger, identity, dependency and telemetry.","videoUrl":"https://www.youtube.com/watch?v=lpZCwzYVNpA","videoTitle":"Build and deploy Azure Functions with VS Code","videoNote":"Follow the practical create, test and deploy workflow.","docUrl":"https://learn.microsoft.com/en-us/azure/azure-functions/functions-overview","docTitle":"Azure Functions overview","docSource":"Microsoft Learn"},{"id":"d21","stage":6,"stageName":"VMs, App Service, Function Apps and containers","title":"Containers: ACR, ACI, Container Apps and AKS","objective":"Understand the Azure container choices and select the simplest service that meets the workload need.","subtopics":["Container image, registry and runtime concepts","Azure Container Registry","Azure Container Instances","Azure Container Apps environments and revisions","AKS control plane and node pools overview","Ingress, secrets, identity and scaling"],"lab":"Containerize a small API conceptually or with Docker, push to a sandbox registry where available, and compare how it would run on ACI, Container Apps and AKS.","deliverable":"A container-platform decision matrix for three workload sizes.","videoUrl":"https://www.youtube.com/watch?v=jfYJEcDOOkI","videoTitle":"Azure Container Apps tutorial","videoNote":"Use this to compare a managed container platform with ACI and AKS.","docUrl":"https://learn.microsoft.com/en-us/azure/container-apps/compare-options","docTitle":"Compare Azure container options","docSource":"Microsoft Learn"},{"id":"d22","stage":7,"stageName":"Storage, SQL, Cosmos DB and Key Vault","title":"Azure Storage services and security","objective":"Select and secure blobs, files, queues and tables while understanding durability and access methods.","subtopics":["Storage account types and namespaces","Blob, Files, Queue and Table services","LRS, ZRS, GRS and GZRS concepts","Hot, cool, cold and archive tiers","Shared keys, SAS and Entra authorization","Network rules, private endpoints and lifecycle management"],"lab":"Create a private blob container in a sandbox, upload a file using RBAC, inspect network controls and configure a simple lifecycle rule. Delete the account after the lab if needed.","deliverable":"A storage selection and security checklist.","videoUrl":"https://www.youtube.com/watch?v=YnFkgLxqrKQ&t=2114s","videoTitle":"Azure Storage Master Class — core services","videoNote":"Start at 35:14; continue through access and network protection.","docUrl":"https://learn.microsoft.com/en-us/azure/storage/common/storage-introduction","docTitle":"Introduction to Azure Storage","docSource":"Microsoft Learn"},{"id":"d23","stage":7,"stageName":"Storage, SQL, Cosmos DB and Key Vault","title":"Azure SQL architecture and secure connectivity","objective":"Understand Azure SQL deployment choices, authentication, backup and network access.","subtopics":["Azure SQL Database, Managed Instance and SQL on VM","Logical server and database model","Entra authentication and contained users","Firewall rules and private endpoints","Automated backup, retention and point-in-time restore","Elastic pools, scaling and monitoring"],"lab":"Design a private application-to-Azure-SQL path using managed identity. Include DNS, firewall/public access settings, permissions, backups and validation queries.","deliverable":"A secure SQL connection design plus recovery requirements.","videoUrl":"https://www.youtube.com/watch?v=p7X8lH_XMtI","videoTitle":"Create and explore Azure SQL Database","videoNote":"Follow the portal walkthrough, then map it to private connectivity.","docUrl":"https://learn.microsoft.com/en-us/azure/azure-sql/database/sql-database-paas-overview","docTitle":"What is Azure SQL Database?","docSource":"Microsoft Learn"},{"id":"d24","stage":7,"stageName":"Storage, SQL, Cosmos DB and Key Vault","title":"Azure Cosmos DB data modeling and operations","objective":"Understand partitioning, throughput, consistency and network controls for globally distributed NoSQL data.","subtopics":["Cosmos DB APIs and resource hierarchy","Partition key selection","Request Units and throughput modes","Consistency levels","Global distribution and failover","Private endpoints, backup and monitoring"],"lab":"Choose a partition key for a service-dashboard data model. Estimate access patterns and create a small database/container in a sandbox where possible.","deliverable":"A data model containing partition key, query patterns and scaling rationale.","videoUrl":"https://www.youtube.com/watch?v=PZAQHUv8wLk","videoTitle":"Azure Cosmos DB — performance and scalability","videoNote":"Focus on partitioning, throughput, serverless and autoscale.","docUrl":"https://learn.microsoft.com/en-us/azure/cosmos-db/overview","docTitle":"Azure Cosmos DB overview","docSource":"Microsoft Learn"},{"id":"d25","stage":7,"stageName":"Storage, SQL, Cosmos DB and Key Vault","title":"Azure Key Vault and secretless application design","objective":"Protect secrets, keys and certificates and connect workloads through managed identity.","subtopics":["Secrets, keys and certificates","Azure RBAC vs legacy access policies","Soft delete and purge protection","Rotation and versioning","Network access and private endpoints","Managed identity and Key Vault references"],"lab":"Store a test secret, grant a workload only the required read permission, retrieve it using managed identity or a guided example, and inspect audit logs.","deliverable":"A Key Vault access and rotation runbook.","videoUrl":"https://www.youtube.com/watch?v=PgujSug1ZbI","videoTitle":"Azure Key Vault tutorial","videoNote":"Learn vault objects, access models and safe secret handling.","docUrl":"https://learn.microsoft.com/en-us/azure/key-vault/general/overview","docTitle":"Azure Key Vault overview","docSource":"Microsoft Learn"},{"id":"d26","stage":8,"stageName":"Load Balancer, Application Gateway and Front Door","title":"Azure Load Balancer and Layer 4 distribution","objective":"Distribute TCP/UDP traffic across healthy backends using public or internal load balancing.","subtopics":["Layer 4 load balancing","Public and internal load balancers","Frontend IP and backend pool","Health probes and load-balancing rules","Inbound NAT rules and outbound behavior","Zone redundancy and HA ports"],"lab":"Design an internal load balancer for two application VMs. Specify probe, rule, backend pool, NSG requirements and failure behavior.","deliverable":"A complete Layer 4 load-balancer configuration worksheet.","videoUrl":"https://www.youtube.com/watch?v=nVZYDhB_M64&t=6365s","videoTitle":"Azure Load Balancer and Layer 4 traffic","videoNote":"Start at 1:46:05 and focus on probes, rules and SKUs.","docUrl":"https://learn.microsoft.com/en-us/azure/load-balancer/load-balancer-overview","docTitle":"Azure Load Balancer overview","docSource":"Microsoft Learn"},{"id":"d27","stage":8,"stageName":"Load Balancer, Application Gateway and Front Door","title":"Application Gateway and Web Application Firewall","objective":"Route and protect HTTP/S applications at Layer 7 inside an Azure region.","subtopics":["Listeners, frontend IPs and certificates","Backend pools and HTTP settings","Health probes","Path-based and host-based routing","TLS termination and end-to-end TLS","WAF modes, policies and logs"],"lab":"Design one gateway that routes /api to an API backend and /web to a web backend. Add probes, TLS, WAF and private backend considerations.","deliverable":"An Application Gateway request-flow diagram and rule table.","videoUrl":"https://www.youtube.com/watch?v=nVZYDhB_M64&t=6975s","videoTitle":"Application Gateway and Web Application Firewall","videoNote":"Start at 1:56:15 and continue through Layer 7 routing.","docUrl":"https://learn.microsoft.com/en-us/azure/application-gateway/overview","docTitle":"Azure Application Gateway overview","docSource":"Microsoft Learn"},{"id":"d28","stage":8,"stageName":"Load Balancer, Application Gateway and Front Door","title":"Azure Front Door, Traffic Manager and global routing","objective":"Differentiate global HTTP acceleration from DNS-based traffic distribution and regional gateways.","subtopics":["Front Door edge architecture","Origins, origin groups and health probes","Caching, routing and WAF","Traffic Manager DNS routing methods","Global failover patterns","Front Door vs Application Gateway vs Load Balancer"],"lab":"Choose the right traffic service for an internal app, a regional public app and a global public app. Explain the decision and failure behavior.","deliverable":"A four-service comparison matrix with clear selection rules.","videoUrl":"https://www.youtube.com/watch?v=nVZYDhB_M64&t=7435s","videoTitle":"Traffic Manager and Azure Front Door","videoNote":"Start at 2:03:55; compare DNS-based and proxy-based routing.","docUrl":"https://learn.microsoft.com/en-us/azure/frontdoor/front-door-overview","docTitle":"Azure Front Door overview","docSource":"Microsoft Learn"},{"id":"d29","stage":9,"stageName":"Monitoring, Log Analytics, Application Insights and alerts","title":"Azure Monitor, metrics, logs and diagnostic settings","objective":"Understand Azure telemetry sources and route the right data to a central workspace.","subtopics":["Platform metrics and resource logs","Activity Log and subscription events","Log Analytics workspaces","Diagnostic settings and destinations","Data Collection Rules concept","Retention, cost and data ownership"],"lab":"Enable diagnostic settings for a sandbox resource and send selected logs to Log Analytics. Identify the table that receives the data and define retention expectations.","deliverable":"A monitoring data-flow diagram from resource to workspace to alert.","videoUrl":"https://www.youtube.com/watch?v=gzBXFnfvoXo&t=51s","videoTitle":"Azure Monitoring Master Class","videoNote":"Start at 00:51 and study metrics, diagnostics and logs.","docUrl":"https://learn.microsoft.com/en-us/azure/azure-monitor/fundamentals/overview","docTitle":"Azure Monitor overview","docSource":"Microsoft Learn"},{"id":"d30","stage":9,"stageName":"Monitoring, Log Analytics, Application Insights and alerts","title":"Application Insights and practical KQL","objective":"Trace application behavior and query telemetry for failures, latency and dependencies.","subtopics":["Requests, dependencies, exceptions and traces","Distributed tracing and operation IDs","Live Metrics and availability tests","KQL where, project, summarize and extend","Time ranges, joins and time charts","Sampling and telemetry volume"],"lab":"Write at least five KQL queries: failed requests, slow requests, top exceptions, dependency failures and events by time bucket.","deliverable":"A reusable KQL query pack with comments explaining each result.","videoUrl":"https://www.youtube.com/watch?v=gzBXFnfvoXo&t=2241s","videoTitle":"Azure Monitor Logs, Application Insights and KQL","videoNote":"Start at 37:21; practise the KQL examples in the documentation.","docUrl":"https://learn.microsoft.com/en-us/azure/azure-monitor/app/app-insights-overview","docTitle":"Application Insights overview","docSource":"Microsoft Learn"},{"id":"d31","stage":9,"stageName":"Monitoring, Log Analytics, Application Insights and alerts","title":"Alerts, action groups, workbooks and health signals","objective":"Turn telemetry into actionable notifications and operational dashboards.","subtopics":["Metric, log-search and activity-log alerts","Action groups and notification channels","Alert severity and noise reduction","Service Health and Resource Health","Workbooks and dashboards","Post-deployment monitoring windows"],"lab":"Create or design an alert for application errors or resource health. Define threshold, evaluation window, severity, action group, owner and runbook link.","deliverable":"An alert specification and one operational workbook layout.","videoUrl":"https://www.youtube.com/watch?v=gzBXFnfvoXo&t=2834s","videoTitle":"Azure alerts, action groups and automation","videoNote":"Start at 47:14 and continue through action groups.","docUrl":"https://learn.microsoft.com/en-us/azure/azure-monitor/alerts/alerts-overview","docTitle":"Azure Monitor alerts overview","docSource":"Microsoft Learn"},{"id":"d32","stage":10,"stageName":"Security, Defender, Policy and governance","title":"Microsoft Defender for Cloud and security posture","objective":"Interpret security recommendations and distinguish posture management from workload protection.","subtopics":["Secure score and recommendations","Regulatory compliance dashboard","Defender plans overview","Vulnerability assessment concepts","Just-in-time VM access","Security alerts and workflow ownership"],"lab":"Review Defender recommendations in read-only mode or a guided lab. Select five findings and classify them by risk, owner, remediation and evidence needed.","deliverable":"A prioritized remediation register with owners and validation evidence.","videoUrl":"https://www.youtube.com/watch?v=gzBXFnfvoXo&t=5485s","videoTitle":"Microsoft Defender for Cloud","videoNote":"Start at 1:31:25 for posture, recommendations and protection.","docUrl":"https://learn.microsoft.com/en-us/azure/defender-for-cloud/defender-for-cloud-introduction","docTitle":"What is Microsoft Defender for Cloud?","docSource":"Microsoft Learn"},{"id":"d33","stage":10,"stageName":"Security, Defender, Policy and governance","title":"Azure Policy, initiatives and remediation","objective":"Use policy to audit, prevent and automatically correct non-compliant configurations.","subtopics":["Policy definitions, assignments and scope","Initiatives and parameters","Audit, deny, modify and deployIfNotExists effects","Compliance state and evaluation","Exemptions and exclusions","Remediation tasks and managed identity"],"lab":"Assign an audit-only tag or allowed-location policy in a sandbox. Observe compliance, test an exemption and plan remediation without disrupting existing resources.","deliverable":"A policy rollout plan: audit -> evaluate -> remediate -> enforce.","videoUrl":"https://www.youtube.com/watch?v=t-i4XrygWCc&t=4680s","videoTitle":"Azure Policy, initiatives and compliance","videoNote":"Start at 1:18:00 and follow the policy examples.","docUrl":"https://learn.microsoft.com/en-us/azure/governance/policy/overview","docTitle":"Azure Policy overview","docSource":"Microsoft Learn"},{"id":"d34","stage":10,"stageName":"Security, Defender, Policy and governance","title":"Governance baseline, cost control and landing zones","objective":"Combine management groups, policy, access and financial controls into a repeatable platform baseline.","subtopics":["Landing-zone principles","Management-group hierarchy","Naming, tagging and resource locks","Budgets, cost analysis and reservations overview","Azure Resource Graph concept","Prod/non-prod separation and platform ownership"],"lab":"Design a Next Gen governance baseline for prod and non-prod subscriptions, including identity, policy, networking, monitoring, tags and cost ownership.","deliverable":"A one-page landing-zone control map.","videoUrl":"https://www.youtube.com/watch?v=t-i4XrygWCc&t=5571s","videoTitle":"Governance, cost management and platform controls","videoNote":"Start at 1:32:51; connect governance controls to landing zones.","docUrl":"https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/ready/landing-zone/","docTitle":"Azure landing zones","docSource":"Microsoft Learn"},{"id":"d35","stage":11,"stageName":"Terraform for Azure","title":"Terraform fundamentals and Azure provider workflow","objective":"Understand declarative infrastructure and execute the core Terraform lifecycle safely.","subtopics":["Infrastructure as Code and desired state","HCL blocks, arguments and expressions","AzureRM provider and authentication concepts","terraform init, fmt, validate, plan and apply","State file purpose and dependency graph","Destroy behavior and cost cleanup"],"lab":"Create a disposable Azure resource group with Terraform in a safe subscription. Run fmt, validate, plan, apply, inspect state and destroy.","deliverable":"A working minimal Terraform repository with README and cleanup steps.","videoUrl":"https://www.youtube.com/watch?v=V53AHWun17s&t=324s","videoTitle":"Terraform with Azure — beginner project","videoNote":"Start at 05:24 and follow init, plan, apply, state and destroy.","docUrl":"https://developer.hashicorp.com/terraform/tutorials/azure-get-started","docTitle":"Get started with Terraform on Azure","docSource":"HashiCorp Developer"},{"id":"d36","stage":11,"stageName":"Terraform for Azure","title":"Reusable Terraform structure and modules","objective":"Build maintainable Terraform that supports multiple environments without copying everything.","subtopics":["Input variables, outputs and locals","Data sources and resource references","Modules and module interfaces","for_each, count and dynamic blocks","Variable validation and sensitive values","Environment tfvars and naming patterns"],"lab":"Build a small VNet module that accepts address space and a subnet map, then outputs VNet and subnet IDs. Use approved internal modules at work rather than public modules.","deliverable":"A reusable module with typed inputs, validation, outputs and an example call.","videoUrl":"https://www.youtube.com/watch?v=bEXfPzoB4RE&t=13120s","videoTitle":"Terraform modules and reusable structure","videoNote":"Start at 3:38:40 for modules; pair it with typed variables and outputs.","docUrl":"https://developer.hashicorp.com/terraform/language/modules/develop","docTitle":"Develop Terraform modules","docSource":"HashiCorp Developer"},{"id":"d37","stage":11,"stageName":"Terraform for Azure","title":"Terraform for Azure networking and private access","objective":"Translate the secure application-network design into modular infrastructure code.","subtopics":["VNet and subnet resources","NSG rules and associations","Route tables and subnet associations","Private DNS zones and links","Private endpoint inputs and dependencies","Provider aliases and environment separation overview"],"lab":"Produce a Terraform plan for an application subnet, private-endpoint subnet, NSG, route table and DNS link. Replace generic modules with your company-approved equivalents for work use.","deliverable":"A review-ready network Terraform design and dependency diagram.","videoUrl":"https://www.youtube.com/watch?v=V53AHWun17s&t=1017s","videoTitle":"Build Azure networking with Terraform","videoNote":"Start at 16:57 for VNet, subnet, NSG and associations.","docUrl":"https://developer.hashicorp.com/terraform/tutorials/azure-get-started/azure-build","docTitle":"Build Azure infrastructure with Terraform","docSource":"HashiCorp Developer"},{"id":"d38","stage":11,"stageName":"Terraform for Azure","title":"Remote state, drift, import and team safety","objective":"Operate Terraform safely in a team and handle resources that already exist.","subtopics":["Remote backend and state locking","State separation by environment","Plan review and drift detection","terraform import and import blocks","Moved blocks and refactoring","Secrets, provider credentials and state protection"],"lab":"Configure or design an Azure Storage remote backend, import one disposable existing resource, run a drift check and document recovery from a failed apply.","deliverable":"A Terraform team operating guide covering state, review, import and recovery.","videoUrl":"https://www.youtube.com/watch?v=YcJ9IeukJL8&t=4468s","videoTitle":"Terraform state, safety and team considerations","videoNote":"Start at 1:14:28; continue through state considerations and commands.","docUrl":"https://developer.hashicorp.com/terraform/language/state/remote","docTitle":"Terraform remote state","docSource":"HashiCorp Developer"},{"id":"d39","stage":12,"stageName":"CI/CD with GitHub or Azure DevOps","title":"CI/CD foundations, Git flow and secure Azure authentication","objective":"Understand how code moves through pull requests, automated checks and controlled environments.","subtopics":["Git branches, commits and pull requests","Pipeline YAML, triggers, jobs and steps","Build artifacts and environment variables","Service connections and workload identity federation","Secrets and protected environments","Review, approvals and separation of duties"],"lab":"Create a repository workflow that runs terraform fmt -check and terraform validate on pull requests. Use a local or mock validation job if Azure authentication is unavailable.","deliverable":"A CI workflow plus branch-protection and reviewer rules.","videoUrl":"https://www.youtube.com/watch?v=YMdtaWfU_QE","videoTitle":"DevOps foundations — Git, CI and CD","videoNote":"Use this for the delivery-flow mental model before writing YAML.","docUrl":"https://docs.github.com/en/actions","docTitle":"GitHub Actions documentation","docSource":"GitHub Docs"},{"id":"d40","stage":12,"stageName":"CI/CD with GitHub or Azure DevOps","title":"Terraform deployment pipeline with approvals","objective":"Build a safe plan-and-apply pipeline for non-prod and prod.","subtopics":["Init, validate, plan and plan artifact","Manual approval before apply","Environment-specific variables and state","Concurrency and deployment locking","Policy/security gates and evidence","Failure handling, rollback and post-deploy tests"],"lab":"Draft a GitHub Actions, Azure DevOps or internal Dojo360-style workflow that produces a reviewed plan, deploys non-prod and requires approval for prod.","deliverable":"A complete pipeline diagram and YAML skeleton with control points.","videoUrl":"https://www.youtube.com/watch?v=QcBtWX72dRw","videoTitle":"GitHub Actions with Terraform","videoNote":"A concise plan-and-apply workflow introduction for Azure.","docUrl":"https://learn.microsoft.com/en-us/devops/deliver/iac-github-actions","docTitle":"Deploy infrastructure with GitHub Actions","docSource":"Microsoft Learn"},{"id":"d41","stage":13,"stageName":"Backup, DR, availability and scaling","title":"Azure backup, restore and recovery validation","objective":"Choose backup controls based on data type and prove that restoration works.","subtopics":["Recovery Services vault and Backup vault concepts","VM and disk backup","Azure Files and blob protection overview","PaaS database backup and point-in-time restore","Retention, immutability and soft delete concepts","Restore testing and evidence"],"lab":"Create an RPO/RTO table for VM, App Service, Storage, SQL, Cosmos DB and Key Vault data. Write one restore test for the most critical component.","deliverable":"A backup policy matrix and quarterly restore-test procedure.","videoUrl":"https://www.youtube.com/watch?v=tGr1KqnuxeM&t=8238s","videoTitle":"Azure Backup and restore strategy","videoNote":"Start at 2:17:18 and connect backup choices to restore testing.","docUrl":"https://learn.microsoft.com/en-us/azure/backup/backup-overview","docTitle":"Azure Backup overview","docSource":"Microsoft Learn"},{"id":"d42","stage":13,"stageName":"Backup, DR, availability and scaling","title":"Disaster recovery, availability and scaling strategy","objective":"Design for failures across instances, zones and regions and connect technical choices to RTO/RPO.","subtopics":["Availability vs disaster recovery","Zones, regions and multi-region patterns","Azure Site Recovery overview","Active-active and active-passive designs","Failover, failback and dependency order","Autoscale, health probes and capacity testing"],"lab":"Write a DR runbook for a small application with App Service or Functions, data store, Key Vault, DNS and monitoring. Include failover decision and validation steps.","deliverable":"A DR architecture, RTO/RPO targets and executable runbook.","videoUrl":"https://www.youtube.com/watch?v=tGr1KqnuxeM&t=3628s","videoTitle":"Azure resiliency, availability and disaster recovery","videoNote":"Start at 1:00:28 and continue through multi-region design.","docUrl":"https://learn.microsoft.com/en-us/azure/reliability/overview","docTitle":"Azure reliability overview","docSource":"Microsoft Learn"},{"id":"d43","stage":14,"stageName":"Hands-on projects and troubleshooting","title":"Capstone: build a secure Next Gen application foundation","objective":"Integrate identity, networking, data, Terraform, pipeline, monitoring and governance into one migration-ready design.","subtopics":["Source inventory and dependency mapping","Target resource group and subnet design","Managed identity and Key Vault access","Private endpoints and central egress","Terraform modules and deployment pipeline","Monitoring, testing, rollback and compliance evidence"],"lab":"Build or fully design a non-prod reference solution: Function App or Web App, Key Vault, Storage or Cosmos DB, application subnet, private endpoint subnet, central egress request, Terraform and pipeline plan.","deliverable":"Architecture diagram, Terraform repository, change plan, test evidence template and rollback plan.","videoUrl":"https://www.youtube.com/watch?v=vq9LuCM4YP4&t=9829s","videoTitle":"Azure migration and Well-Architected review","videoNote":"Start at 2:43:49; use it to review the complete capstone design.","docUrl":"https://learn.microsoft.com/en-us/azure/well-architected/","docTitle":"Azure Well-Architected Framework","docSource":"Microsoft Learn"},{"id":"d44","stage":14,"stageName":"Hands-on projects and troubleshooting","title":"Final troubleshooting assessment and next 90 days","objective":"Prove that you can investigate Azure issues and identify the depth areas to continue after the sprint.","subtopics":["Activity Log and deployment failures","RBAC and managed-identity authorization failures","NSG, route, peering and DNS failures","Private endpoint and public-access conflicts","Terraform drift and pipeline failures","Migration validation and decommission checklist"],"lab":"Work through five scenarios: permission denied, DNS resolves publicly, no egress, Terraform drift and application dependency failure. Record hypothesis, evidence, fix and prevention for each.","deliverable":"A final skills scorecard, portfolio package and 90-day deepening plan based on weak areas.","videoUrl":"https://www.youtube.com/watch?v=0Knf9nub4-k","videoTitle":"AZ-104 final review and weak-area revision","videoNote":"Use the chapter list to revisit the areas you struggled with most.","docUrl":"https://learn.microsoft.com/en-us/troubleshoot/azure/","docTitle":"Azure troubleshooting documentation","docSource":"Microsoft Learn"}];
+    const PLAN_START = new Date(Date.UTC(2026, 9, 6));
+    const TOTAL_CALENDAR_DAYS = 60;
+    const STORAGE_KEY = "azure-60-day-sprint-v1";
+
+    const stageHues = {1:190,2:205,3:222,4:198,5:174,6:258,7:286,8:324,9:42,10:12,11:150,12:116,13:72,14:342};
+    const stages = [...new Map(LESSONS.map(x => [x.stage, x.stageName])).entries()].map(([number,name]) => ({number,name}));
+
+    let state = loadState();
+    let filters = { search: "", stage: "all", status: "all", showWeekends: true };
+
+    function loadState() {
+      try {
+        const parsed = JSON.parse(localStorage.getItem(STORAGE_KEY) || "null");
+        if (parsed && typeof parsed === "object") {
+          return {
+            completed: parsed.completed || {},
+            notes: parsed.notes || {},
+            theme: parsed.uiVersion === 2 ? (parsed.theme || "light") : "light",
+            uiVersion: 2
+          };
+        }
+        return { completed: {}, notes: {}, theme: "light", uiVersion: 2 };
+      } catch (error) {
+        return { completed: {}, notes: {}, theme: "light", uiVersion: 2 };
+      }
+    }
+
+    function saveState(showMessage = false) {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+        if (showMessage) toast("Progress saved in this browser.");
+      } catch (error) {
+        toast("Browser storage is unavailable. Export your progress instead.");
+      }
+    }
+
+    function addUtcDays(date, days) {
+      const copy = new Date(date.getTime());
+      copy.setUTCDate(copy.getUTCDate() + days);
+      return copy;
+    }
+
+    function isoDate(date) { return date.toISOString().slice(0,10); }
+    function formatDate(date, options) { return new Intl.DateTimeFormat(undefined, {...options, timeZone: "UTC"}).format(date); }
+    function isWeekend(date) { const d = date.getUTCDay(); return d === 0 || d === 6; }
+    function escapeHtml(value="") { return String(value).replace(/[&<>'"]/g, ch => ({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"}[ch])); }
+
+    function buildSchedule() {
+      const items = [];
+      let lessonIndex = 0;
+      for (let i = 0; i < TOTAL_CALENDAR_DAYS; i++) {
+        const date = addUtcDays(PLAN_START, i);
+        const weekend = isWeekend(date);
+        items.push({
+          calendarDay: i + 1,
+          date,
+          dateKey: isoDate(date),
+          weekend,
+          lesson: weekend ? null : LESSONS[lessonIndex++]
+        });
+      }
+      if (lessonIndex !== LESSONS.length) console.warn("Lesson/date mismatch", lessonIndex, LESSONS.length);
+      return items;
+    }
+
+    const SCHEDULE = buildSchedule();
+
+    function getWeekNumberFromStart(item) { return Math.floor((item.calendarDay - 1) / 7) + 1; }
+
+    function matchesFilters(item) {
+      if (item.weekend) return filters.showWeekends && filters.stage === "all" && filters.status === "all" && !filters.search;
+      const lesson = item.lesson;
+      if (filters.stage !== "all" && String(lesson.stage) !== filters.stage) return false;
+      const done = !!state.completed[lesson.id];
+      if (filters.status === "completed" && !done) return false;
+      if (filters.status === "pending" && done) return false;
+      if (filters.search) {
+        const haystack = [lesson.stageName, lesson.title, lesson.objective, lesson.lab, lesson.deliverable, lesson.videoTitle, lesson.videoNote, lesson.docTitle, lesson.docSource, ...lesson.subtopics].join(" ").toLowerCase();
+        if (!haystack.includes(filters.search.toLowerCase())) return false;
+      }
+      return true;
+    }
+
+    function renderSchedule() {
+      const root = document.getElementById("schedule");
+      const visible = SCHEDULE.filter(matchesFilters);
+      root.classList.add("day-grid");
+
+      document.getElementById("resultCount").textContent = `${visible.length} calendar item${visible.length === 1 ? "" : "s"} shown`;
+
+      if (!visible.length) {
+        root.innerHTML = '<div class="empty"><strong>No matching days.</strong><br>Clear or change the filters to see the schedule.</div>';
+        return;
+      }
+
+      root.innerHTML = visible.map(renderDay).join("");
+      bindDynamicEvents();
+    }
+
+    function renderDay(item) {
+      const dateLong = formatDate(item.date, {weekday:"long", month:"short", day:"numeric", year:"numeric"});
+      if (item.weekend) {
+        return `<article class="day-card rest-card" id="date-${item.dateKey}">
+          <div class="rest-copy">
+            <div class="rest-icon" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.8 14.4A8.5 8.5 0 0 1 9.6 3.2 8.5 8.5 0 1 0 20.8 14.4Z"/></svg></div>
+            <div><h3>Weekend recovery - no study scheduled</h3><p>Rest, recharge and return on Monday. Progress is not counted on weekends.</p></div>
+          </div>
+          <span class="date-pill">Day ${item.calendarDay} - ${escapeHtml(dateLong)}</span>
+        </article>`;
+      }
+
+      const lesson = item.lesson;
+      const done = !!state.completed[lesson.id];
+      const today = item.dateKey === localTodayIso();
+      const hue = stageHues[lesson.stage] || 190;
+      const notes = escapeHtml(state.notes[lesson.id] || "");
+      return `<article class="day-card study ${done ? "completed" : ""} ${today ? "today" : ""}" id="lesson-${lesson.id}" style="--stage-h:${hue}">
+        <div class="card-main">
+          <div class="card-top">
+            <div>
+              <div class="day-meta">
+                <span class="day-number">Calendar day ${item.calendarDay} - Study session ${LESSONS.findIndex(x => x.id === lesson.id) + 1}</span>
+                <span class="date-pill">${escapeHtml(dateLong)}</span>
+                <span class="stage-pill">Stage ${lesson.stage}</span>
+                ${today ? '<span class="today-pill">Today</span>' : ''}
+              </div>
+              <h3>${escapeHtml(lesson.title)}</h3>
+              <p class="objective">${escapeHtml(lesson.objective)}</p>
+            </div>
+            <label class="check-control" title="Mark this study session complete">
+              <input class="complete-check" data-id="${lesson.id}" type="checkbox" ${done ? "checked" : ""} aria-label="Mark ${escapeHtml(lesson.title)} complete">
+              <span class="check-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="m5 12 4 4L19 6"/></svg></span>
+            </label>
+          </div>
+
+          <div class="card-columns">
+            <div>
+              <p class="section-label">Topics and subtopics</p>
+              <ul class="topic-list">${lesson.subtopics.map(t => `<li>${escapeHtml(t)}</li>`).join("")}</ul>
+            </div>
+            <div class="activity-box">
+              <div class="activity"><b>45-minute hands-on lab</b><p>${escapeHtml(lesson.lab)}</p></div>
+              <div class="activity"><b>Evidence to keep</b><p>${escapeHtml(lesson.deliverable)}</p></div>
+            </div>
+          </div>
+
+          <div class="resource-section">
+            <div class="resource-heading">
+              <div><span class="resource-eyebrow">Curated learning resources</span><strong>Open both links for this session</strong></div>
+              <span class="resource-time">Video 35 min · Docs 30 min</span>
+            </div>
+            <div class="resource-grid">
+              <a class="resource-card video-resource" href="${escapeHtml(lesson.videoUrl)}" target="_blank" rel="noopener noreferrer" aria-label="Watch ${escapeHtml(lesson.videoTitle)} on YouTube">
+                <span class="resource-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M21.58 7.19a2.8 2.8 0 0 0-1.97-1.98C17.87 4.75 12 4.75 12 4.75s-5.87 0-7.61.46A2.8 2.8 0 0 0 2.42 7.2 29.4 29.4 0 0 0 2 12a29.4 29.4 0 0 0 .42 4.81 2.8 2.8 0 0 0 1.97 1.98c1.74.46 7.61.46 7.61.46s5.87 0 7.61-.46a2.8 2.8 0 0 0 1.97-1.98A29.4 29.4 0 0 0 22 12a29.4 29.4 0 0 0-.42-4.81ZM10 15.1V8.9l5.2 3.1-5.2 3.1Z"/></svg></span>
+                <span class="resource-copy"><span class="resource-type">YouTube video</span><strong>${escapeHtml(lesson.videoTitle)}</strong><small>${escapeHtml(lesson.videoNote)}</small></span>
+                <span class="resource-arrow" aria-hidden="true">↗</span>
+              </a>
+              <a class="resource-card docs-resource" href="${escapeHtml(lesson.docUrl)}" target="_blank" rel="noopener noreferrer" aria-label="Read ${escapeHtml(lesson.docTitle)}">
+                <span class="resource-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H11v16H6.5A2.5 2.5 0 0 0 4 21.5v-16Z"/><path d="M20 5.5A2.5 2.5 0 0 0 17.5 3H13v16h4.5a2.5 2.5 0 0 1 2.5 2.5v-16Z"/></svg></span>
+                <span class="resource-copy"><span class="resource-type">${escapeHtml(lesson.docSource)}</span><strong>${escapeHtml(lesson.docTitle)}</strong><small>Read the concepts, examples, limitations and linked how-to guidance.</small></span>
+                <span class="resource-arrow" aria-hidden="true">↗</span>
+              </a>
+            </div>
+          </div>
+        </div>
+        <details ${notes ? "open" : ""}>
+          <summary><span>Daily notes and questions</span><span class="chev">&#9662;</span></summary>
+          <div class="notes-wrap">
+            <textarea class="lesson-note" data-id="${lesson.id}" placeholder="Write what you learned, commands used, errors found and questions for tomorrow...">${notes}</textarea>
+            <span class="saved-hint">Notes save automatically in this browser.</span>
+          </div>
+        </details>
+      </article>`;
+    }
+
+    function localTodayIso() {
+      const now = new Date();
+      const y = now.getFullYear();
+      const m = String(now.getMonth()+1).padStart(2,"0");
+      const d = String(now.getDate()).padStart(2,"0");
+      return `${y}-${m}-${d}`;
+    }
+
+    function bindDynamicEvents() {
+      document.querySelectorAll(".complete-check").forEach(box => {
+        box.addEventListener("change", event => {
+          const id = event.currentTarget.dataset.id;
+          state.completed[id] = event.currentTarget.checked;
+          saveState();
+          renderSchedule();
+          updateDashboard();
+          const lesson = LESSONS.find(x => x.id === id);
+          toast(event.currentTarget.checked ? `Completed: ${lesson.title}` : `Marked pending: ${lesson.title}`);
+        });
+      });
+
+      document.querySelectorAll(".lesson-note").forEach(area => {
+        area.addEventListener("input", event => {
+          const id = event.currentTarget.dataset.id;
+          state.notes[id] = event.currentTarget.value;
+          saveState();
+        });
+      });
+    }
+
+    function updateDashboard() {
+      const completedCount = LESSONS.filter(x => state.completed[x.id]).length;
+      const pct = Math.round((completedCount / LESSONS.length) * 100);
+      const remaining = LESSONS.length - completedCount;
+      document.getElementById("progressPct").textContent = `${pct}%`;
+      document.getElementById("progressRing").style.setProperty("--p", `${pct * 3.6}deg`);
+      document.getElementById("progressBar").style.width = `${pct}%`;
+      document.getElementById("progressTitle").textContent = completedCount === LESSONS.length ? "Sprint complete - excellent work" : `${completedCount} of ${LESSONS.length} sessions completed`;
+      document.getElementById("progressText").textContent = completedCount === LESSONS.length
+        ? "You completed the 88-hour foundation sprint. Use your scorecard to choose the next depth areas."
+        : `${remaining} sessions remaining - ${completedCount * 2} focused hours completed.`;
+      renderStageProgress();
+    }
+
+    function renderStageProgress() {
+      const root = document.getElementById("stageProgress");
+      root.innerHTML = stages.map(stage => {
+        const items = LESSONS.filter(x => x.stage === stage.number);
+        const done = items.filter(x => state.completed[x.id]).length;
+        const pct = items.length ? Math.round(done / items.length * 100) : 0;
+        return `<div class="stage-row" style="--h:${stageHues[stage.number] || 190}">
+          <div class="stage-head"><span class="stage-name" title="${escapeHtml(stage.name)}">${stage.number}. ${escapeHtml(stage.name)}</span><span class="stage-count">${done}/${items.length}</span></div>
+          <div class="stage-line"><i style="width:${pct}%"></i></div>
+        </div>`;
+      }).join("");
+    }
+
+    function populateStageFilter() {
+      const select = document.getElementById("stageFilter");
+      select.insertAdjacentHTML("beforeend", stages.map(s => `<option value="${s.number}">Stage ${s.number}: ${escapeHtml(s.name)}</option>`).join(""));
+    }
+
+    function applyTheme() {
+      document.body.classList.toggle("light", state.theme === "light");
+      document.getElementById("themeBtn").setAttribute("aria-label", state.theme === "light" ? "Use dark theme" : "Use light theme");
+    }
+
+    function toast(message) {
+      const el = document.getElementById("toast");
+      el.textContent = message;
+      el.classList.add("show");
+      clearTimeout(toast.timer);
+      toast.timer = setTimeout(() => el.classList.remove("show"), 2400);
+    }
+
+    function exportProgress() {
+      const payload = {
+        version: 2,
+        plan: "60-Day Azure Learning Sprint — Videos, Docs & Labs",
+        startDate: "2026-10-06",
+        exportedAt: new Date().toISOString(),
+        state
+      };
+      const blob = new Blob([JSON.stringify(payload, null, 2)], {type: "application/json"});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `azure-learning-progress-${localTodayIso()}.json`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+      toast("Progress backup exported.");
+    }
+
+    function importProgress(file) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        try {
+          const parsed = JSON.parse(reader.result);
+          const imported = parsed.state || parsed;
+          if (!imported || typeof imported !== "object") throw new Error("Invalid file");
+          state = {
+            completed: imported.completed || {},
+            notes: imported.notes || {},
+            theme: imported.theme === "dark" ? "dark" : "light",
+            uiVersion: 2
+          };
+          saveState();
+          applyTheme();
+          renderSchedule();
+          updateDashboard();
+          toast("Progress imported successfully.");
+        } catch (error) {
+          toast("Could not import that progress file.");
+        }
+      };
+      reader.readAsText(file);
+    }
+
+    function jumpToCurrent() {
+      const today = localTodayIso();
+      let target = document.getElementById(`date-${today}`) || document.querySelector(".day-card.today");
+      if (!target) {
+        const firstPending = LESSONS.find(x => !state.completed[x.id]);
+        target = firstPending ? document.getElementById(`lesson-${firstPending.id}`) : document.getElementById(`lesson-${LESSONS[LESSONS.length-1].id}`);
+      }
+      if (target) target.scrollIntoView({behavior:"smooth", block:"center"});
+    }
+
+    document.getElementById("searchInput").addEventListener("input", e => { filters.search = e.target.value.trim(); renderSchedule(); });
+    document.getElementById("stageFilter").addEventListener("change", e => { filters.stage = e.target.value; renderSchedule(); });
+    document.getElementById("statusFilter").addEventListener("change", e => { filters.status = e.target.value; renderSchedule(); });
+    document.getElementById("weekendToggle").addEventListener("change", e => { filters.showWeekends = e.target.checked; renderSchedule(); });
+    document.getElementById("themeBtn").addEventListener("click", () => { state.theme = state.theme === "light" ? "dark" : "light"; saveState(); applyTheme(); });
+    document.getElementById("printBtn").addEventListener("click", () => window.print());
+    document.getElementById("jumpBtn").addEventListener("click", jumpToCurrent);
+    document.getElementById("exportBtn").addEventListener("click", exportProgress);
+    document.getElementById("importBtn").addEventListener("click", () => document.getElementById("importInput").click());
+    document.getElementById("importInput").addEventListener("change", e => { const file = e.target.files && e.target.files[0]; if (file) importProgress(file); e.target.value = ""; });
+    document.getElementById("resetBtn").addEventListener("click", () => {
+      if (!confirm("Reset every tick and note in this plan? Export a backup first if you may need it.")) return;
+      state = { completed: {}, notes: {}, theme: state.theme, uiVersion: 2 };
+      saveState();
+      renderSchedule();
+      updateDashboard();
+      toast("All learning progress has been reset.");
+    });
+
+    populateStageFilter();
+    applyTheme();
+    renderSchedule();
+    updateDashboard();
+  </script>
+</body>
+</html>
